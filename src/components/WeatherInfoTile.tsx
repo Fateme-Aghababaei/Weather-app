@@ -12,8 +12,8 @@ const WeatherInfoTile: React.FC<WeatherInfoTileProps> = ({ icon, value, label, c
         <div className={`backdrop-blur-sm bg-white/10 rounded-xl p-4 flex items-center gap-4 ${className}`}>
             {icon}
             <div>
-                <p className="text-sm text-white">{value}</p>
-                <p className="text-lg font-semibold">{label}</p>
+                <p className="text-sm text-white">{label}</p>
+                <p className="text-lg font-semibold">{value}</p>
             </div>
         </div>
     );

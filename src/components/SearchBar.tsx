@@ -7,6 +7,7 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ city, onCityChange, onSearch }) => {
+
     return (
         <div className="flex items-center bg-white/10 border border-white backdrop-blur-xs rounded-full px-4 py-2 w-full max-w-md mb-10">
             <input
@@ -19,6 +20,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ city, onCityChange, onSearch }) =
             <button
                 className="w-8 h-8 flex items-center justify-center text-white rounded-full cursor-pointer"
                 onClick={onSearch}
+                disabled={!city}
             >
                 <FaSearch size={14} />
             </button>
