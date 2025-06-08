@@ -3,9 +3,16 @@ import {
   WiStrongWind,
   WiHumidity,
   WiDaySunny,
+  WiNightClear,
   WiBarometer,
   WiDirectionUp,
   WiDirectionRight,
+  WiCloudy,
+  WiNightCloudy,
+  WiRain,
+  WiSnow,
+  WiThunderstorm,
+  WiFog
 } from 'react-icons/wi';
 
 import SearchBar from './components/SearchBar';
@@ -27,6 +34,34 @@ function App() {
     }
   };
 
+  const isDayTime = (sunrise: number, sunset: number, timezone: number) => {
+    const now = Math.floor(Date.now() / 1000); // UTC time in seconds
+    const localNow = now + timezone; // Adjust to local time
+    return localNow > sunrise && localNow < sunset;
+  };
+
+  // Function to get weather icon based on conditions (for condition tile)
+  const getConditionIcon = (weatherId: number, isDay: boolean) => {
+    // Group weather conditions by ID ranges
+    if (weatherId >= 200 && weatherId < 300) return WiThunderstorm;
+    if (weatherId >= 300 && weatherId < 400) return WiRain;
+    if (weatherId >= 500 && weatherId < 600) return WiRain;
+    if (weatherId >= 600 && weatherId < 700) return WiSnow;
+    if (weatherId >= 700 && weatherId < 800) return WiFog;
+
+    // Handle clear and cloudy conditions
+    if (weatherId === 800) {
+      return isDay ? WiDaySunny : WiNightClear;
+    }
+
+    if (weatherId > 800 && weatherId < 900) {
+      return isDay ? WiCloudy : WiNightCloudy;
+    }
+
+    // Default icon
+    return isDay ? WiDaySunny : WiNightClear;
+  };
+
   return (
     <div className="relative bg-[url('./assets/background6.jpg')] bg-cover bg-center bg-no-repeat bg-fixed min-h-screen w-screen text-white">
       <div className="absolute inset-0 bg-black/50 z-0"></div>
@@ -41,6 +76,11 @@ function App() {
               className="col-span-2 row-span-3"
               temp={`${Math.round(weatherData.main.temp)}°C`}
               city={`${weatherData.name} (${weatherData.sys.country})`}
+              isDay={isDayTime(
+                weatherData.sys.sunrise,
+                weatherData.sys.sunset,
+                weatherData.timezone
+              )}
             />
 
             <WeatherInfoTile
@@ -54,9 +94,18 @@ function App() {
               value={`${weatherData.main.humidity}%`}
             />
             <WeatherInfoTile
-              icon={<WiDaySunny className="text-3xl text-yellow-300" />}
+              icon={(() => {
+                const isDay = isDayTime(
+                  weatherData.sys.sunrise,
+                  weatherData.sys.sunset,
+                  weatherData.timezone
+                );
+                const Icon = getConditionIcon(weatherData.weather[0].id, isDay);
+                return <Icon className="text-3xl text-yellow-300" />;
+              })()}
               label="Condition"
-              value={weatherData.weather[0].description}
+              value={weatherData.weather[0].description.charAt(0).toUpperCase() +
+                weatherData.weather[0].description.slice(1)}
             />
             <WeatherInfoTile
               icon={<WiBarometer className="text-3xl text-yellow-300" />}
