@@ -16,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     const [cities, setCities] = useState<CityRow[]>([]);
 
     useEffect(() => {
-        fetch('/data/cities.csv')
+        fetch('./data/cities.csv')
             .then(res => res.text())
             .then(csv => {
                 const { data } = Papa.parse<CityRow>(csv, {
